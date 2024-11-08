@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Projectile Motion Calculator</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="calculator-container">
+    <div class="calculator">
+      <h1>Projectile Motion Calculator</h1>
+      <p>Calculate the time of flight, maximum height, and range of a projectile.</p>
+      
+      <label for="velocity">Initial Velocity (m/s):</label><br>
+      <input type="number" id="velocity" placeholder="Enter velocity" required><br>
+      
+      <label for="angle">Launch Angle (degrees):</label><br>
+      <input type="number" id="angle" placeholder="Enter angle" required><br>
+      
+      <label for="height">Initial Height (m):</label><br>
+      <input type="number" id="height" placeholder="Enter height" required><br>
+      
+      <button onclick="calculateProjectile()">Calculate</button><br>
+
+      <div id="result" class="result"></div>
+    </div>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
