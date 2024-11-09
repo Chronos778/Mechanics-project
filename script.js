@@ -35,29 +35,36 @@ function simulateProjectile(velocity, angleRad, initialHeight, totalTime, maxHei
   const canvas = document.getElementById("simulationCanvas");
   const ctx = canvas.getContext("2d");
   const g = 9.81;
-  const scale = Math.min(canvas.width / range / 1.2, canvas.height / maxHeight / 2); // Dynamic scaling based on range and height
+
+  const padding = 50;
+  const scale = Math.min(
+    (canvas.width - 2 * padding) / range,
+    (canvas.height - 2 * padding) / (maxHeight + initialHeight)
+  );
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+  // Draw X and Y axes
   ctx.strokeStyle = "#555555";
   ctx.lineWidth = 2;
   ctx.beginPath();
-  ctx.moveTo(50, canvas.height - 50);
-  ctx.lineTo(canvas.width - 20, canvas.height - 50); // x-axis
-  ctx.moveTo(50, canvas.height - 50);
-  ctx.lineTo(50, 20); // y-axis
+  ctx.moveTo(padding, canvas.height - padding); // x-axis
+  ctx.lineTo(canvas.width - padding, canvas.height - padding);
+  ctx.moveTo(padding, canvas.height - padding); // y-axis
+  ctx.lineTo(padding, padding);
   ctx.stroke();
 
+  // Y-axis labels for height
   ctx.fillStyle = "#ffffff";
   ctx.font = "12px Arial";
-
-  for (let i = 0; i <= maxHeight; i += Math.ceil(maxHeight / 5)) {
-    const yPos = canvas.height - 50 - i * scale;
+  for (let i = 0; i <= maxHeight + initialHeight; i += Math.ceil((maxHeight + initialHeight) / 5)) {
+    const yPos = canvas.height - padding - i * scale;
     ctx.fillText(i + " m", 20, yPos);
   }
 
+  // X-axis labels for range
   for (let i = 0; i <= range; i += Math.ceil(range / 5)) {
-    const xPos = 50 + i * scale;
+    const xPos = padding + i * scale;
     ctx.fillText(i + " m", xPos, canvas.height - 30);
   }
 
@@ -69,25 +76,24 @@ function simulateProjectile(velocity, angleRad, initialHeight, totalTime, maxHei
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Draw Axes
+    // Redraw axes and grid markers
     ctx.strokeStyle = "#555555";
     ctx.lineWidth = 2;
     ctx.beginPath();
-    ctx.moveTo(50, canvas.height - 50);
-    ctx.lineTo(canvas.width - 20, canvas.height - 50);
-    ctx.moveTo(50, canvas.height - 50);
-    ctx.lineTo(50, 20);
+    ctx.moveTo(padding, canvas.height - padding);
+    ctx.lineTo(canvas.width - padding, canvas.height - padding);
+    ctx.moveTo(padding, canvas.height - padding);
+    ctx.lineTo(padding, padding);
     ctx.stroke();
 
-    // Labels for Axes
     ctx.fillStyle = "#ffffff";
     ctx.font = "12px Arial";
-    for (let i = 0; i <= maxHeight; i += Math.ceil(maxHeight / 5)) {
-      const yPos = canvas.height - 50 - i * scale;
+    for (let i = 0; i <= maxHeight + initialHeight; i += Math.ceil((maxHeight + initialHeight) / 5)) {
+      const yPos = canvas.height - padding - i * scale;
       ctx.fillText(i + " m", 20, yPos);
     }
     for (let i = 0; i <= range; i += Math.ceil(range / 5)) {
-      const xPos = 50 + i * scale;
+      const xPos = padding + i * scale;
       ctx.fillText(i + " m", xPos, canvas.height - 30);
     }
 
@@ -95,8 +101,8 @@ function simulateProjectile(velocity, angleRad, initialHeight, totalTime, maxHei
     const x = velocity * Math.cos(angleRad) * time;
     const y = initialHeight + (velocity * Math.sin(angleRad) * time - 0.5 * g * Math.pow(time, 2));
 
-    const canvasX = 50 + x * scale;
-    const canvasY = canvas.height - 50 - y * scale;
+    const canvasX = padding + x * scale;
+    const canvasY = canvas.height - padding - y * scale;
 
     // Draw the projectile point
     ctx.beginPath();
