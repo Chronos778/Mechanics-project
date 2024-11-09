@@ -21,7 +21,11 @@ function calculateProjectile() {
 
     // Calculate final velocity and impact angle
     const finalVelocity = Math.sqrt(Math.pow(velocity * Math.cos(angleRad), 2) + Math.pow(velocity * Math.sin(angleRad) - g * timeOfFlight, 2));
-    const impactAngle = Math.atan((velocity * Math.sin(angleRad) - g * timeOfFlight) / (velocity * Math.cos(angleRad))) * (180 / Math.PI);
+    let impactAngle = (Math.atan((velocity * Math.sin(angleRad) - g * timeOfFlight) / (velocity * Math.cos(angleRad))) * (180 / Math.PI)) % 360;
+if (impactAngle < 0) {
+    impactAngle += 360;
+}
+
 
     // Update results on the page
     document.getElementById("result").innerHTML = `
