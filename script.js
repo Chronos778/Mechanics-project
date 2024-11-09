@@ -1,36 +1,3 @@
-function calculateProjectile() {
-  const velocity = parseFloat(document.getElementById("velocity").value);
-  const angle = parseFloat(document.getElementById("angle").value);
-  const height = parseFloat(document.getElementById("height").value);
-  const g = 9.81;
-
-  if (isNaN(velocity) || velocity <= 0 || isNaN(angle) || angle < 0 || angle > 90 || isNaN(height) || height < 0) {
-    alert("Please enter valid values.");
-    return;
-  }
-
-  const angleRad = (angle * Math.PI) / 180;
-  const timeOfFlight = (velocity * Math.sin(angleRad) + Math.sqrt(Math.pow(velocity * Math.sin(angleRad), 2) + 2 * g * height)) / g;
-  const maxHeight = height + Math.pow(velocity * Math.sin(angleRad), 2) / (2 * g);
-  const range = velocity * Math.cos(angleRad) * timeOfFlight;
-
-  const finalVy = velocity * Math.sin(angleRad) - g * timeOfFlight;
-  const finalVx = velocity * Math.cos(angleRad);
-  const finalVelocity = Math.sqrt(Math.pow(finalVx, 2) + Math.pow(finalVy, 2));
-  const impactAngle = Math.abs(Math.atan(finalVy / finalVx) * (180 / Math.PI));
-
-  const resultDiv = document.getElementById("result");
-  resultDiv.innerHTML = `
-    <p>Time of Flight: ${timeOfFlight.toFixed(2)} s</p>
-    <p>Maximum Height: ${maxHeight.toFixed(2)} m</p>
-    <p>Range: ${range.toFixed(2)} m</p>
-    <p>Final Velocity (Resultant): ${finalVelocity.toFixed(2)} m/s</p>
-    <p>Angle of Impact: ${impactAngle.toFixed(2)}°</p>
-  `;
-
-  simulateProjectile(velocity, angleRad, height, timeOfFlight, maxHeight, range, finalVelocity, impactAngle);
-}
-
 function simulateProjectile(velocity, angleRad, initialHeight, totalTime, maxHeight, range, finalVelocity, impactAngle) {
   const canvas = document.getElementById("simulationCanvas");
   const ctx = canvas.getContext("2d");
@@ -70,6 +37,7 @@ function simulateProjectile(velocity, angleRad, initialHeight, totalTime, maxHei
 
   let time = 0;
   const interval = 15;
+  let previousX = padding, previousY = canvas.height - padding - initialHeight * scale;
 
   function animate() {
     if (time > totalTime) return;
@@ -104,11 +72,22 @@ function simulateProjectile(velocity, angleRad, initialHeight, totalTime, maxHei
     const canvasX = padding + x * scale;
     const canvasY = canvas.height - padding - y * scale;
 
-    // Draw the projectile point
+    // Draw the projectile path line
     ctx.beginPath();
-    ctx.arc(canvasX, canvasY, 5, 0, 2 * Math.PI);
+    ctx.moveTo(previousX, previousY);
+    ctx.lineTo(canvasX, canvasY);
+    ctx.strokeStyle = "#0ea900";
+    ctx.lineWidth = 3;
+    ctx.stroke();
+
+    // Draw the projectile point as a larger circle
+    ctx.beginPath();
+    ctx.arc(canvasX, canvasY, 8, 0, 2 * Math.PI); // Increased radius for visibility
     ctx.fillStyle = "#0ea900";
     ctx.fill();
+
+    previousX = canvasX;
+    previousY = canvasY;
 
     // Display Information
     ctx.fillStyle = "#ffffff";
