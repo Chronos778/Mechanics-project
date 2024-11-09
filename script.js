@@ -18,7 +18,9 @@ function calculateProjectile() {
     const range = (velocity * Math.cos(angleRad)) * timeOfFlight;
 
     const finalVelocity = Math.sqrt(Math.pow(velocity * Math.cos(angleRad), 2) + Math.pow(velocity * Math.sin(angleRad) - g * timeOfFlight, 2));
-    const impactAngle = (Math.atan((velocity * Math.sin(angleRad) - g * timeOfFlight) / (velocity * Math.cos(angleRad))) * (180 / Math.PI)) % 360;
+    let impactAngle = Math.atan((velocity * Math.sin(angleRad) - g * timeOfFlight) / (velocity * Math.cos(angleRad))) * (180 / Math.PI);
+    impactAngle = ((impactAngle % 360) + 360) % 360;
+ 
 
     document.getElementById("result").innerHTML = `
         <p><strong>Time of Flight:</strong> ${timeOfFlight.toFixed(2)} s</p>
