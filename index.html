@@ -2,25 +2,243 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Projectile Simulation</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projectile Motion Calculator</title>
     <style>
-        body { color: #ffffff; background-color: #333333; font-family: Arial, sans-serif; }
-        canvas { border: 1px solid #ffffff; background-color: #222222; }
+        /* General body styling */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2efef;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            color: #ffffff;
+            padding: 20px;
+        }
+
+        /* Calculator container styling */
+        .calculator-container {
+            background-color: #000000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 25px;
+            border-radius: 20px;
+            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        /* Heading styling */
+        h1 {
+            font-size: 24px;
+            margin-bottom: 12px;
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        /* Input label styling */
+        label {
+            display: block;
+            margin: 12px 0 6px;
+            color: #ffffff;
+        }
+
+        /* Input field styling */
+        input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border-radius: 20px;
+            border: 1px solid #000000;
+            background-color: #ffffff;
+            color: #000000;
+            font-size: 16px;
+        }
+
+        /* Button styling */
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #0ea900;
+            color: #fff;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 500;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #333333;
+        }
+
+        /* Result section styling */
+        .result {
+            margin-top: 20px;
+            background-color: #111111;
+            padding: 15px;
+            border-radius: 20px;
+            border: 1px solid #333333;
+            color: #dcdcdc;
+            font-size: 20px;
+        }
+
+        /* Simulation canvas styling */
+        #simulationCanvas {
+            margin-top: 20px;
+            background-color: #222222;
+            border: 1px solid #555555;
+            border-radius: 10px;
+            width: 100%;
+            max-width: 100%;
+            height: auto;
+        }
+
+        /* Responsiveness for smaller screens */
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 20px;
+            }
+            .calculator-container {
+                padding: 15px 20px;
+            }
+            button {
+                padding: 10px;
+            }
+            .result {
+                font-size: 18px;
+            }
+        }
     </style>
 </head>
 <body>
-    <h1>Projectile Motion Calculator</h1>
-    <label for="velocity">Velocity (m/s): </label>
-    <input type="number" id="velocity">
-    <label for="angle">Angle (°): </label>
-    <input type="number" id="angle">
-    <label for="height">Initial Height (m): </label>
-    <input type="number" id="height">
-    <button onclick="calculateProjectile()">Calculate and Simulate</button>
-    
-    <div id="result"></div>
-    <canvas id="simulationCanvas" width="800" height="400"></canvas>
-    
-    <script src="script.js"></script>
-</body>
-</html>
+
+    <div class="calculator-container">
+        <h1>Projectile Motion Calculator</h1>
+        
+        <!-- Input Fields for velocity, angle, and height -->
+        <label for="velocity">Initial Velocity (m/s):</label>
+        <input type="number" id="velocity" placeholder="Enter velocity" step="any">
+        
+        <label for="angle">Launch Angle (degrees):</label>
+        <input type="number" id="angle" placeholder="Enter angle" step="any">
+        
+        <label for="height">Initial Height (m):</label>
+        <input type="number" id="height" placeholder="Enter initial height" step="any">
+
+        <!-- Calculate Button -->
+        <button onclick="calculateProjectile()">Calculate</button>
+
+        <!-- Results Section -->
+        <div id="result" class="result"></div>
+
+        <!-- Simulation Canvas -->
+        <canvas id="simulationCanvas" width="600" height="400"></canvas>
+    </div>
+
+    <script>
+        function calculateProjectile() {
+            const velocity = parseFloat(document.getElementById("velocity").value);
+            const angle = parseFloat(document.getElementById("angle").value);
+            const height = parseFloat(document.getElementById("height").value);
+            const g = 9.81;
+
+            if (isNaN(velocity) || velocity <= 0 || isNaN(angle) || angle < 0 || angle > 90 || isNaN(height) || height < 0) {
+                alert("Please enter valid values.");
+                return;
+            }
+
+            const angleRad = (angle * Math.PI) / 180;
+            const timeOfFlight = (velocity * Math.sin(angleRad) + Math.sqrt(Math.pow(velocity * Math.sin(angleRad), 2) + 2 * g * height)) / g;
+            const maxHeight = height + Math.pow(velocity * Math.sin(angleRad), 2) / (2 * g);
+            const range = velocity * Math.cos(angleRad) * timeOfFlight;
+
+            const finalVy = velocity * Math.sin(angleRad) - g * timeOfFlight;
+            const finalVx = velocity * Math.cos(angleRad);
+            const finalVelocity = Math.sqrt(Math.pow(finalVx, 2) + Math.pow(finalVy, 2));
+            const impactAngle = Math.abs(Math.atan(finalVy / finalVx) * (180 / Math.PI));
+
+            const resultDiv = document.getElementById("result");
+            resultDiv.innerHTML = `
+                <p>Time of Flight: ${timeOfFlight.toFixed(2)} s</p>
+                <p>Maximum Height: ${maxHeight.toFixed(2)} m</p>
+                <p>Range: ${range.toFixed(2)} m</p>
+                <p>Final Velocity (Resultant): ${finalVelocity.toFixed(2)} m/s</p>
+                <p>Angle of Impact: ${impactAngle.toFixed(2)}°</p>
+            `;
+
+            simulateProjectile(velocity, angleRad, height, timeOfFlight, maxHeight, range, finalVelocity, impactAngle);
+        }
+
+        function simulateProjectile(velocity, angleRad, initialHeight, totalTime, maxHeight, range, finalVelocity, impactAngle) {
+            const canvas = document.getElementById("simulationCanvas");
+            const ctx = canvas.getContext("2d");
+            const g = 9.81;
+
+            const padding = 50;
+            const scale = Math.min(
+                (canvas.width - 2 * padding) / range,
+                (canvas.height - 2 * padding) / (maxHeight + initialHeight)
+            );
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw X and Y axes
+            ctx.strokeStyle = "#555555";
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(padding, canvas.height - padding); // x-axis
+            ctx.lineTo(canvas.width - padding, canvas.height - padding);
+            ctx.moveTo(padding, canvas.height - padding); // y-axis
+            ctx.lineTo(padding, padding);
+            ctx.stroke();
+
+            // Y-axis labels for height
+            ctx.fillStyle = "#ffffff";
+            ctx.font = "12px Arial";
+            for (let i = 0; i <= maxHeight + initialHeight; i += Math.ceil((maxHeight + initialHeight) / 5)) {
+                const yPos = canvas.height - padding - i * scale;
+                ctx.fillText(i + " m", 20, yPos);
+            }
+
+            // X-axis labels for range
+            for (let i = 0; i <= range; i += Math.ceil(range / 5)) {
+                const xPos = padding + i * scale;
+                ctx.fillText(i + " m", xPos, canvas.height - 30);
+            }
+
+            let time = 0;
+            const interval = 15;
+            let previousX = padding, previousY = canvas.height - padding - initialHeight * scale;
+
+            function animate() {
+                if (time > totalTime) return;
+
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                // Redraw axes and grid markers
+                ctx.strokeStyle = "#555555";
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(padding, canvas.height - padding);
+                ctx.lineTo(canvas.width - padding, canvas.height - padding);
+                ctx.moveTo(padding, canvas.height - padding);
+                ctx.lineTo(padding, padding);
+                ctx.stroke();
+
+                ctx.fillStyle = "#ffffff";
+                ctx.font = "12px Arial";
+                for (let i = 0; i <= maxHeight + initialHeight; i += Math.ceil((maxHeight + initialHeight) / 5)) {
+                    const yPos = canvas.height - padding - i * scale;
+                    ctx.fillText(i + " m", 20, yPos);
+                }
+                for (let i = 0; i <= range; i += Math.ceil(range / 5)) {
+                    const xPos = padding + i * scale;
+                    ctx.fillText(i + " m", xPos, canvas.height - 30);
+                }
+
