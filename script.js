@@ -35,11 +35,12 @@ function simulateProjectile(velocity, angleRad, initialHeight, totalTime, maxHei
   const canvas = document.getElementById("simulationCanvas");
   const ctx = canvas.getContext("2d");
   const g = 9.81;
-  const scale = 5;
+  const scale = Math.min(canvas.width / range / 1.2, canvas.height / maxHeight / 2); // Dynamic scaling based on range and height
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  ctx.strokeStyle = "#888888";
+  ctx.strokeStyle = "#555555";
+  ctx.lineWidth = 2;
   ctx.beginPath();
   ctx.moveTo(50, canvas.height - 50);
   ctx.lineTo(canvas.width - 20, canvas.height - 50); // x-axis
@@ -61,14 +62,16 @@ function simulateProjectile(velocity, angleRad, initialHeight, totalTime, maxHei
   }
 
   let time = 0;
-  const interval = 20;
+  const interval = 15;
 
   function animate() {
     if (time > totalTime) return;
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    ctx.strokeStyle = "#888888";
+    // Draw Axes
+    ctx.strokeStyle = "#555555";
+    ctx.lineWidth = 2;
     ctx.beginPath();
     ctx.moveTo(50, canvas.height - 50);
     ctx.lineTo(canvas.width - 20, canvas.height - 50);
@@ -76,6 +79,7 @@ function simulateProjectile(velocity, angleRad, initialHeight, totalTime, maxHei
     ctx.lineTo(50, 20);
     ctx.stroke();
 
+    // Labels for Axes
     ctx.fillStyle = "#ffffff";
     ctx.font = "12px Arial";
     for (let i = 0; i <= maxHeight; i += Math.ceil(maxHeight / 5)) {
@@ -87,17 +91,20 @@ function simulateProjectile(velocity, angleRad, initialHeight, totalTime, maxHei
       ctx.fillText(i + " m", xPos, canvas.height - 30);
     }
 
+    // Calculate x and y positions of the projectile
     const x = velocity * Math.cos(angleRad) * time;
     const y = initialHeight + (velocity * Math.sin(angleRad) * time - 0.5 * g * Math.pow(time, 2));
 
     const canvasX = 50 + x * scale;
     const canvasY = canvas.height - 50 - y * scale;
 
+    // Draw the projectile point
     ctx.beginPath();
     ctx.arc(canvasX, canvasY, 5, 0, 2 * Math.PI);
     ctx.fillStyle = "#0ea900";
     ctx.fill();
 
+    // Display Information
     ctx.fillStyle = "#ffffff";
     ctx.font = "14px Arial";
     ctx.fillText(`Time: ${time.toFixed(2)} s`, 60, 20);
