@@ -1,32 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Projectile Motion Calculator</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <title>Projectile Simulation</title>
+    <style>
+        body { color: #ffffff; background-color: #333333; font-family: Arial, sans-serif; }
+        canvas { border: 1px solid #ffffff; background-color: #222222; }
+    </style>
 </head>
 <body>
-  <div class="calculator-container">
-    <div class="calculator">
-      <h1>Projectile Motion Calculator</h1>
-      <p>Calculate the time of flight, maximum height, and range of a projectile.</p>
-      
-      <label for="velocity" title="Enter the initial speed of the projectile">Initial Velocity (m/s):</label><br>
-      <input type="number" id="velocity" placeholder="Enter velocity" required><br>
-      
-      <label for="angle" title="Enter the angle at which the projectile is launched">Launch Angle (degrees):</label><br>
-      <input type="number" id="angle" placeholder="Enter angle" required><br>
-      
-      <label for="height" title="Enter the starting height of the projectile">Initial Height (m):</label><br>
-      <input type="number" id="height" placeholder="Enter height" required><br>
-      
-      <button onclick="calculateProjectile()">Calculate</button><br>
-
-      <div id="result" class="result"></div>
-      <canvas id="simulationCanvas" width="600" height="400"></canvas>
-    </div>
-  </div>
-  <script src="script.js"></script>
+    <h1>Projectile Motion Calculator</h1>
+    <label for="velocity">Velocity (m/s): </label>
+    <input type="number" id="velocity">
+    <label for="angle">Angle (°): </label>
+    <input type="number" id="angle">
+    <label for="height">Initial Height (m): </label>
+    <input type="number" id="height">
+    <button onclick="calculateProjectile()">Calculate and Simulate</button>
+    
+    <div id="result"></div>
+    <canvas id="simulationCanvas" width="800" height="400"></canvas>
+    
+    <script src="script.js"></script>
 </body>
 </html>
