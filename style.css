@@ -70,3 +70,9 @@ button:hover {
   color: #dcdcdc;
   font-size: 20px;
 }
+#simulationCanvas {
+  margin-top: 20px;
+  background-color: #222222;
+  border: 1px solid #555555;
+  border-radius: 10px;
+}
