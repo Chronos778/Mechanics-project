@@ -12,7 +12,6 @@ function calculateProjectile() {
 
     const g = 9.81;
 
-
     const timeOfFlight = (velocity * Math.sin(angleRad) + Math.sqrt(Math.pow(velocity * Math.sin(angleRad), 2) + 2 * g * initialHeight)) / g;
     const maxHeight = initialHeight + Math.pow(velocity * Math.sin(angleRad), 2) / (2 * g);
     const range = (velocity * Math.cos(angleRad)) * timeOfFlight;
@@ -43,7 +42,6 @@ function simulateProjectile(velocity, angleRad, initialHeight, totalTime, maxHei
     );
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-
 
     ctx.strokeStyle = "#555555";
     ctx.lineWidth = 2;
