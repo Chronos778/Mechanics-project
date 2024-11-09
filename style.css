@@ -7,7 +7,7 @@ body {
   min-height: 100vh;
   margin: 0;
   color: #ffffff;
-  padding: 20px; /* Added padding to ensure it looks good on smaller screens */
+  padding: 20px;
 }
 
 .calculator-container {
@@ -19,7 +19,7 @@ body {
   border-radius: 20px;
   box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.3);
   width: 100%;
-  max-width: 400px; /* Ensures the calculator is centered and not too wide on large screens */
+  max-width: 400px;
   text-align: center;
 }
 
@@ -61,12 +61,12 @@ button {
 }
 
 button:hover {
-  background-color: #333333; /* Updated hover for more contrast */
+  background-color: #333333;
 }
 
 .result {
   margin-top: 20px;
-  background-color: #111111; /* Slightly lighter to contrast better with text */
+  background-color: #111111;
   padding: 15px;
   border-radius: 20px;
   border: 1px solid #333333;
@@ -79,12 +79,11 @@ button:hover {
   background-color: #222222;
   border: 1px solid #555555;
   border-radius: 10px;
-  width: 100%; /* Responsive width */
+  width: 100%;
   max-width: 100%;
-  height: auto; /* Maintain aspect ratio */
+  height: auto;
 }
 
-/* Responsive adjustments */
 @media (max-width: 600px) {
   h1 {
     font-size: 20px;
