@@ -9,27 +9,16 @@
 <body>
     <div class="calculator-container">
         <h1>Projectile Motion Calculator</h1>
-        
-        <!-- Input Fields for velocity, angle, and height -->
         <label for="velocity">Initial Velocity (m/s):</label>
         <input type="number" id="velocity" placeholder="Enter velocity" step="any">
-        
         <label for="angle">Launch Angle (degrees):</label>
         <input type="number" id="angle" placeholder="Enter angle" step="any">
-        
         <label for="height">Initial Height (m):</label>
         <input type="number" id="height" placeholder="Enter initial height" step="any">
-
-        <!-- Calculate Button -->
         <button onclick="calculateProjectile()">Calculate</button>
-
-        <!-- Results Section -->
         <div id="result" class="result"></div>
-
-        <!-- Simulation Canvas -->
         <canvas id="simulationCanvas" width="600" height="400"></canvas>
     </div>
-
     <script src="script.js"></script>
 </body>
 </html>
