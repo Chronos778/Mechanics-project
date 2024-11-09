@@ -98,3 +98,11 @@ button:hover {
     font-size: 18px;
   }
 }
+canvas {
+    border: 2px solid #ffffff;
+    background-color: #222222;
+}
+#result p {
+    color: #00ff00;
+    font-size: 16px;
+}
