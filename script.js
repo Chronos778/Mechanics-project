@@ -142,7 +142,7 @@ function simulateProjectile(velocity, angleRad, initialHeight, totalTime, maxHei
         // Plotting on CRC canvas
         const crcX = (x / range) * crcCanvas.width;
         const crcY = crcCanvas.height - (y / (maxHeight + initialHeight)) * crcCanvas.height;
-        crcCtx.fillStyle = "#ffffff";
+        crcCtx.fillStyle = "#222222";
         crcCtx.beginPath();
         crcCtx.arc(crcX, crcY, 2, 0, 2 * Math.PI);
         crcCtx.fill();
