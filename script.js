@@ -9,7 +9,6 @@ function calculateProjectile() {
     }
 
     const angleRad = angle * (Math.PI / 180);
-
     const g = 9.81;
 
     const timeOfFlight = (velocity * Math.sin(angleRad) + Math.sqrt(Math.pow(velocity * Math.sin(angleRad), 2) + 2 * g * initialHeight)) / g;
@@ -33,36 +32,47 @@ function calculateProjectile() {
 function simulateProjectile(velocity, angleRad, initialHeight, totalTime, maxHeight, range, finalVelocity, impactAngle) {
     const canvas = document.getElementById("simulationCanvas");
     const ctx = canvas.getContext("2d");
-    const g = 9.81;
+    const crcCanvas = document.getElementById("crcCanvas");
+    const crcCtx = crcCanvas.getContext("2d");
 
+    const g = 9.81;
     const padding = 50;
-    const scale = Math.min(
-        (canvas.width - 2 * padding) / range,
-        (canvas.height - 2 * padding) / (maxHeight + initialHeight)
-    );
+    const scale = Math.min((canvas.width - 2 * padding) / range, (canvas.height - 2 * padding) / (maxHeight + initialHeight));
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    crcCtx.clearRect(0, 0, crcCanvas.width, crcCanvas.height);
 
+    // Draw axes on main simulation canvas
     ctx.strokeStyle = "#555555";
     ctx.lineWidth = 2;
     ctx.beginPath();
-    ctx.moveTo(padding, canvas.height - padding); 
+    ctx.moveTo(padding, canvas.height - padding);
     ctx.lineTo(canvas.width - padding, canvas.height - padding);
     ctx.moveTo(padding, canvas.height - padding);
     ctx.lineTo(padding, padding);
     ctx.stroke();
 
+    // Draw scales on main simulation canvas
     ctx.fillStyle = "#ffffff";
     ctx.font = "12px Arial";
     for (let i = 0; i <= maxHeight + initialHeight; i += Math.ceil((maxHeight + initialHeight) / 5)) {
         const yPos = canvas.height - padding - i * scale;
         ctx.fillText(i + " m", 20, yPos);
     }
-
     for (let i = 0; i <= range; i += Math.ceil(range / 5)) {
         const xPos = padding + i * scale;
         ctx.fillText(i + " m", xPos, canvas.height - 30);
     }
+
+    // Draw CRC canvas background
+    crcCtx.strokeStyle = "#555555";
+    crcCtx.lineWidth = 1;
+    crcCtx.beginPath();
+    crcCtx.moveTo(0, crcCanvas.height / 2);
+    crcCtx.lineTo(crcCanvas.width, crcCanvas.height / 2);
+    crcCtx.moveTo(crcCanvas.width / 2, 0);
+    crcCtx.lineTo(crcCanvas.width / 2, crcCanvas.height);
+    crcCtx.stroke();
 
     let time = 0;
     const interval = 15;
@@ -71,8 +81,10 @@ function simulateProjectile(velocity, angleRad, initialHeight, totalTime, maxHei
     function animate() {
         if (time > totalTime) return;
 
+        // Clear main simulation canvas
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+        // Redraw main simulation axes
         ctx.strokeStyle = "#555555";
         ctx.lineWidth = 2;
         ctx.beginPath();
@@ -82,6 +94,7 @@ function simulateProjectile(velocity, angleRad, initialHeight, totalTime, maxHei
         ctx.lineTo(padding, padding);
         ctx.stroke();
 
+        // Redraw scales
         ctx.fillStyle = "#ffffff";
         ctx.font = "12px Arial";
         for (let i = 0; i <= maxHeight + initialHeight; i += Math.ceil((maxHeight + initialHeight) / 5)) {
@@ -93,12 +106,14 @@ function simulateProjectile(velocity, angleRad, initialHeight, totalTime, maxHei
             ctx.fillText(i + " m", xPos, canvas.height - 30);
         }
 
+        // Calculate position
         const x = velocity * Math.cos(angleRad) * time;
         const y = initialHeight + (velocity * Math.sin(angleRad) * time - 0.5 * g * Math.pow(time, 2));
 
         const canvasX = padding + x * scale;
         const canvasY = canvas.height - padding - y * scale;
 
+        // Draw projectile path on main canvas
         ctx.beginPath();
         ctx.moveTo(previousX, previousY);
         ctx.lineTo(canvasX, canvasY);
@@ -107,13 +122,15 @@ function simulateProjectile(velocity, angleRad, initialHeight, totalTime, maxHei
         ctx.stroke();
 
         ctx.beginPath();
-        ctx.arc(canvasX, canvasY, 10, 0, 2 * Math.PI); 
+        ctx.arc(canvasX, canvasY, 10, 0, 2 * Math.PI);
         ctx.fillStyle = "#ffffff";
         ctx.fill();
 
+        // Update previous position for next frame
         previousX = canvasX;
         previousY = canvasY;
 
+        // Display current time, height, and range
         ctx.fillStyle = "#ffffff";
         ctx.font = "14px Arial";
         ctx.fillText(`Time: ${time.toFixed(2)} s`, 60, 20);
@@ -122,6 +139,15 @@ function simulateProjectile(velocity, angleRad, initialHeight, totalTime, maxHei
         ctx.fillText(`Resultant Velocity: ${finalVelocity.toFixed(2)} m/s`, 60, 80);
         ctx.fillText(`Impact Angle: ${impactAngle.toFixed(2)}°`, 60, 100);
 
+        // Plotting on CRC canvas
+        const crcX = (x / range) * crcCanvas.width;
+        const crcY = crcCanvas.height - (y / (maxHeight + initialHeight)) * crcCanvas.height;
+        crcCtx.fillStyle = "#ffffff";
+        crcCtx.beginPath();
+        crcCtx.arc(crcX, crcY, 2, 0, 2 * Math.PI);
+        crcCtx.fill();
+
+        // Increment time and request next animation frame
         time += interval / 1000;
         requestAnimationFrame(animate);
     }
