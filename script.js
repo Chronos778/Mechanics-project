@@ -102,7 +102,7 @@ function simulateProjectile(velocity, angleRad, initialHeight, totalTime, maxHei
         ctx.beginPath();
         ctx.moveTo(previousX, previousY);
         ctx.lineTo(canvasX, canvasY);
-        ctx.strokeStyle = "#0ea900";
+        ctx.strokeStyle = "#ffffff";
         ctx.lineWidth = 3;
         ctx.stroke();
 
