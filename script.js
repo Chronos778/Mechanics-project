@@ -108,7 +108,7 @@ function simulateProjectile(velocity, angleRad, initialHeight, totalTime, maxHei
 
         ctx.beginPath();
         ctx.arc(canvasX, canvasY, 10, 0, 2 * Math.PI); 
-        ctx.fillStyle = "#0ea900";
+        ctx.fillStyle = "#ffffff";
         ctx.fill();
 
         previousX = canvasX;
