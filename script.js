@@ -8,7 +8,7 @@ function calculateProjectile() {
     const initialHeight = parseFloat(document.getElementById("height").value);
 
     if (isNaN(velocity) || isNaN(angle) || isNaN(initialHeight)) {
-        showNotification("Please enter valid numbers for all inputs.", "error");
+        alert("Please enter valid numbers for all inputs.");
         return;
     }
 
@@ -252,14 +252,14 @@ function drawGrid(ctx, canvas, padding, data) {
     
     // Calculate grid spacing
     const rangeRounded = Math.ceil(data.range / 10) * 10;
-    const heightRounded = Math.ceil(data.maxHeight / 5) * 5;
+    const heightRounded = Math.ceil(Math.max(data.maxHeight, 1) / 5) * 5;
     
-    const gridSpacingX = rangeRounded / 5;
-    const gridSpacingY = heightRounded / 5;
+    const gridSpacingX = Math.max(rangeRounded / 5, 1);
+    const gridSpacingY = Math.max(heightRounded / 5, 1);
     
     // Calculate scale factors
-    const scaleX = (width - 2 * padding) / data.range;
-    const scaleY = (height - 2 * padding) / (data.maxHeight * 1.2);
+    const scaleX = (width - 2 * padding) / Math.max(data.range, 1);
+    const scaleY = (height - 2 * padding) / (Math.max(data.maxHeight, 1) * 1.2);
     
     // Draw vertical grid lines and labels
     ctx.beginPath();
@@ -371,7 +371,186 @@ function drawProjectile(ctx, x, y, time, data) {
 }
 
 function drawVelocityVector(ctx, x, y, angle, magnitude) {
-    const vectorLength = 20;
+    const vectorLength = Math.min(magnitude, 20); // Limit vector length for display
     const endX = x + Math.cos(angle) * vectorLength;
-    const endY = y - Math.sin(angle) * vectorLength; // Subtract because canvas y is inv
+    const endY = y - Math.sin(angle) * vectorLength; // Subtract because canvas y is inverted
+    
+    // Draw the velocity vector
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.lineTo(endX, endY);
+    ctx.strokeStyle = "#FFEB3B";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    
+    // Draw arrowhead
+    const headLength = 7;
+    const headAngle = 0.5;
+    
+    const headX1 = endX - headLength * Math.cos(angle - headAngle);
+    const headY1 = endY + headLength * Math.sin(angle - headAngle);
+    const headX2 = endX - headLength * Math.cos(angle + headAngle);
+    const headY2 = endY + headLength * Math.sin(angle + headAngle);
+    
+    ctx.beginPath();
+    ctx.moveTo(endX, endY);
+    ctx.lineTo(headX1, headY1);
+    ctx.lineTo(headX2, headY2);
+    ctx.closePath();
+    ctx.fillStyle = "#FFEB3B";
+    ctx.fill();
 }
+
+function drawCRCAxes(crcCtx, crcCanvas) {
+    const width = crcCanvas.width;
+    const height = crcCanvas.height;
+    
+    // Clear the canvas
+    crcCtx.clearRect(0, 0, width, height);
+    
+    // Fill background
+    crcCtx.fillStyle = "#f8f9fa";
+    crcCtx.fillRect(0, 0, width, height);
+    
+    // Draw axes
+    crcCtx.beginPath();
+    crcCtx.strokeStyle = "#888";
+    crcCtx.lineWidth = 1;
+    
+    // Horizontal axis
+    crcCtx.moveTo(0, height / 2);
+    crcCtx.lineTo(width, height / 2);
+    
+    // Vertical axis
+    crcCtx.moveTo(width / 2, 0);
+    crcCtx.lineTo(width / 2, height);
+    
+    crcCtx.stroke();
+    
+    // Draw grid lines
+    crcCtx.beginPath();
+    crcCtx.strokeStyle = "#ddd";
+    crcCtx.lineWidth = 0.5;
+    
+    // Draw grid lines
+    for (let i = 0; i < width; i += width / 4) {
+        crcCtx.moveTo(i, 0);
+        crcCtx.lineTo(i, height);
+    }
+    
+    for (let i = 0; i < height; i += height / 4) {
+        crcCtx.moveTo(0, i);
+        crcCtx.lineTo(width, i);
+    }
+    
+    crcCtx.stroke();
+}
+
+function updateCRCCanvas(crcCtx, crcCanvas, xRatio, yRatio, timeRatio) {
+    // Calculate position in CRC canvas
+    const width = crcCanvas.width;
+    const height = crcCanvas.height;
+    
+    const crcX = xRatio * width;
+    const crcY = height - (yRatio * height); // Invert because canvas Y coordinates are top-down
+    
+    // Draw a point at the current position
+    crcCtx.beginPath();
+    crcCtx.arc(crcX, crcY, 2, 0, 2 * Math.PI);
+    
+    // Color based on time progression
+    const r = Math.floor(255 * timeRatio);
+    const g = Math.floor(100 + 100 * (1 - timeRatio));
+    const b = Math.floor(255 * (1 - timeRatio));
+    
+    crcCtx.fillStyle = `rgb(${r}, ${g}, ${b})`;
+    crcCtx.fill();
+}
+
+function resetSimulation() {
+    // Cancel any ongoing animation
+    if (animationId) {
+        cancelAnimationFrame(animationId);
+        animationId = null;
+    }
+    
+    // Clear the canvases
+    const simulationCanvas = document.getElementById("simulationCanvas");
+    const crcCanvas = document.getElementById("crcCanvas");
+    const simCtx = simulationCanvas.getContext("2d");
+    const crcCtx = crcCanvas.getContext("2d");
+    
+    simCtx.clearRect(0, 0, simulationCanvas.width, simulationCanvas.height);
+    crcCtx.clearRect(0, 0, crcCanvas.width, crcCanvas.height);
+    
+    // Reset the result panel
+    document.getElementById("result").innerHTML = `
+        <h3>Results will appear here</h3>
+        <p class="hint">Enter parameters and click Calculate</p>
+    `;
+    
+    // Reset the form fields to default values
+    document.getElementById("velocity").value = "20";
+    document.getElementById("angle").value = "45";
+    document.getElementById("height").value = "0";
+}
+
+function exportResults() {
+    if (!simulationData) {
+        alert("Please run a simulation before exporting results.");
+        return;
+    }
+    
+    // Create a text representation of the results
+    const resultsText = `Projectile Motion Simulation Results
+-----------------------------------
+Initial Velocity: ${simulationData.velocity} m/s
+Launch Angle: ${simulationData.angle} degrees
+Initial Height: ${simulationData.initialHeight} m
+
+Results:
+- Time of Flight: ${simulationData.timeOfFlight.toFixed(2)} s
+- Maximum Height: ${simulationData.maxHeight.toFixed(2)} m
+- Range: ${simulationData.range.toFixed(2)} m
+- Time to Max Height: ${simulationData.timeToMaxHeight.toFixed(2)} s
+- Final Velocity: ${simulationData.finalVelocity.toFixed(2)} m/s
+- Impact Angle: ${simulationData.impactAngle.toFixed(2)} degrees
+
+Generated on: ${new Date().toLocaleString()}
+`;
+    
+    // Create a Blob with the text content
+    const blob = new Blob([resultsText], { type: 'text/plain' });
+    
+    // Create a download link
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'projectile_motion_results.txt';
+    
+    // Trigger the download
+    document.body.appendChild(a);
+    a.click();
+    
+    // Clean up
+    setTimeout(() => {
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }, 100);
+}
+
+// Initialize the page
+document.addEventListener('DOMContentLoaded', function() {
+    // Draw empty axes on load
+    const simulationCanvas = document.getElementById("simulationCanvas");
+    const crcCanvas = document.getElementById("crcCanvas");
+    const simCtx = simulationCanvas.getContext("2d");
+    const crcCtx = crcCanvas.getContext("2d");
+    
+    // Initialize simulationCanvas with dark background
+    simCtx.fillStyle = "#1e1e24";
+    simCtx.fillRect(0, 0, simulationCanvas.width, simulationCanvas.height);
+    
+    // Draw initial CRC axes
+    drawCRCAxes(crcCtx, crcCanvas);
+});
