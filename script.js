@@ -374,3 +374,4 @@ function drawVelocityVector(ctx, x, y, angle, magnitude) {
     const vectorLength = 20;
     const endX = x + Math.cos(angle) * vectorLength;
     const endY = y - Math.sin(angle) * vectorLength; // Subtract because canvas y is inv
+}
