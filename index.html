@@ -3,23 +3,117 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Projectile Motion Calculator</title>
+    <title>Advanced Projectile Motion Simulator</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="calculator-container">
-        <h1>Projectile Motion Calculator</h1>
-        <label for="velocity">Initial Velocity (m/s):</label>
-        <input type="number" id="velocity" placeholder="Enter velocity" step="any">
-        <label for="angle">Launch Angle (degrees):</label>
-        <input type="number" id="angle" placeholder="Enter angle" step="any">
-        <label for="height">Initial Height (m):</label>
-        <input type="number" id="height" placeholder="Enter initial height" step="any">
-        <button onclick="calculateProjectile()">Calculate</button>
-        <div id="result" class="result"></div>
-        <canvas id="simulationCanvas" width="600" height="400"></canvas><br>
-        <canvas id="crcCanvas" width="300" height="300" style="border:1px solid #555;"></canvas>
+    <div class="navbar">
+        <div class="logo">
+            <i class="fas fa-rocket"></i>
+            <span>PhysicsLab</span>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="#" class="active">Projectile Motion</a></li>
+                <li><a href="#">About</a></li>
+                <li><a href="#">Resources</a></li>
+                <li><a href="#">Contact</a></li>
+            </ul>
+        </nav>
     </div>
+
+    <div class="container">
+        <div class="sidebar">
+            <div class="input-panel">
+                <h2>Input Parameters</h2>
+                <div class="input-group">
+                    <label for="velocity">Initial Velocity (m/s)</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <input type="number" id="velocity" placeholder="Enter velocity" step="any" value="20">
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <label for="angle">Launch Angle (degrees)</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-angle-up"></i>
+                        <input type="number" id="angle" placeholder="Enter angle" step="any" value="45">
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <label for="height">Initial Height (m)</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-arrows-alt-v"></i>
+                        <input type="number" id="height" placeholder="Enter initial height" step="any" value="0">
+                    </div>
+                </div>
+                
+                <button onclick="calculateProjectile()" class="calculate-btn">
+                    <i class="fas fa-calculator"></i> Calculate Trajectory
+                </button>
+            </div>
+            
+            <div id="result" class="result-panel">
+                <h3>Results will appear here</h3>
+                <p class="hint">Enter parameters and click Calculate</p>
+            </div>
+        </div>
+        
+        <div class="visualization-panel">
+            <div class="panel-header">
+                <h2>Projectile Motion Simulation</h2>
+                <div class="controls">
+                    <button id="resetBtn" class="control-btn" onclick="resetSimulation()">
+                        <i class="fas fa-redo"></i> Reset
+                    </button>
+                    <button id="exportBtn" class="control-btn" onclick="exportResults()">
+                        <i class="fas fa-download"></i> Export
+                    </button>
+                </div>
+            </div>
+            
+            <div class="canvas-container">
+                <canvas id="simulationCanvas" width="800" height="500"></canvas>
+            </div>
+            
+            <div class="visualization-footer">
+                <div class="legend">
+                    <div class="legend-item">
+                        <span class="legend-color" style="background-color: #4CAF50;"></span>
+                        <span class="legend-text">Trajectory</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-color" style="background-color: #FF5722;"></span>
+                        <span class="legend-text">Max Height Point</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-color" style="background-color: #2196F3;"></span>
+                        <span class="legend-text">Current Position</span>
+                    </div>
+                </div>
+                
+                <div class="crc-container">
+                    <h4>Position Map</h4>
+                    <canvas id="crcCanvas" width="200" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2025 PhysicsLab. Advanced Projectile Motion Simulator.</p>
+            <div class="social-links">
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-github"></i></a>
+                <a href="#"><i class="fab fa-linkedin"></i></a>
+            </div>
+        </div>
+    </footer>
+    
     <script src="script.js"></script>
 </body>
 </html>
